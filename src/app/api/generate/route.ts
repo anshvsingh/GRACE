@@ -21,29 +21,58 @@ Industry: ${industry}
 Target Audience: ${audience}
 Selected Features: ${features.join(", ")}
 
-STRICT RULES:
-- Use Next.js 14 App Router (src/app/ structure NOT pages/)
+CRITICAL RULES:
+- Use Next.js 14 App Router (src/app/ structure)
 - Use TypeScript
 - Use Tailwind CSS for styling
-- Every file must be 100% complete with no placeholders
-- No comments like "add your code here"
-- Use realistic dummy data where needed
+- NEVER import a component that you don't generate as a file
+- NEVER reference external files that aren't in your file list
+- Every import must have a corresponding file in the output
+- Use inline components instead of separate files when possible
+- No placeholders, no TODO comments, complete working code only
 
-REQUIRED FILES TO GENERATE:
-1. package.json (with next, react, typescript, tailwind dependencies)
+EXACT package.json to use:
+{
+  "name": "${projectName.toLowerCase().replace(/\s+/g, '-')}",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "15.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0"
+  }
+}
+
+EXACT files to generate (no more, no less):
+1. package.json (use exact content above)
 2. tsconfig.json
 3. tailwind.config.ts
 4. postcss.config.js
-5. src/app/layout.tsx
-6. src/app/page.tsx (landing/home page)
-7. src/app/globals.css (with tailwind directives)
-8. At least 3 more pages based on the selected features
+5. next.config.js
+6. src/app/globals.css
+7. src/app/layout.tsx (NO external component imports)
+8. src/app/page.tsx (full landing page, NO external imports)
+9. 2-3 more pages based on features (each self-contained, NO external imports)
 
-Return a JSON array ONLY in this exact format, nothing else:
+Return ONLY a valid JSON array, no markdown, no backticks:
 [
   {
     "filename": "package.json",
-    "content": "complete file content here"
+    "content": "exact content here"
   }
 ]`;
 
