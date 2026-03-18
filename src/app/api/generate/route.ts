@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No idea provided" }, { status: 400 });
     }
 
-    const prompt = `You are an expert SaaS developer. Generate a complete file structure and code for a SaaS MVP.
+const prompt = `You are an expert Next.js developer. Generate a complete, working Next.js 14 App Router project.
 
 Project Name: ${projectName}
 Startup Idea: ${idea}
@@ -21,20 +21,31 @@ Industry: ${industry}
 Target Audience: ${audience}
 Selected Features: ${features.join(", ")}
 
-Return a JSON array of files in this exact format:
+STRICT RULES:
+- Use Next.js 14 App Router (src/app/ structure NOT pages/)
+- Use TypeScript
+- Use Tailwind CSS for styling
+- Every file must be 100% complete with no placeholders
+- No comments like "add your code here"
+- Use realistic dummy data where needed
+
+REQUIRED FILES TO GENERATE:
+1. package.json (with next, react, typescript, tailwind dependencies)
+2. tsconfig.json
+3. tailwind.config.ts
+4. postcss.config.js
+5. src/app/layout.tsx
+6. src/app/page.tsx (landing/home page)
+7. src/app/globals.css (with tailwind directives)
+8. At least 3 more pages based on the selected features
+
+Return a JSON array ONLY in this exact format, nothing else:
 [
   {
     "filename": "package.json",
-    "content": "... file content here ..."
-  },
-  {
-    "filename": "src/app/page.tsx",
-    "content": "... file content here ..."
+    "content": "complete file content here"
   }
-]
-
-Generate at least 8-10 real working files. Real code only.
-Return ONLY the JSON array, nothing else.`;
+]`;
 
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
