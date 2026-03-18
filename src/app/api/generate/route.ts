@@ -13,87 +13,138 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No idea provided" }, { status: 400 });
     }
 
-const prompt = `You are an expert Next.js developer. Generate a complete, working Next.js 14 App Router project.
+    const prompt = `You are an expert Next.js developer. Generate a complete working Next.js app.
 
-Project Name: ${projectName}
-Startup Idea: ${idea}
+Project: ${projectName}
+Idea: ${idea}
 Industry: ${industry}
-Target Audience: ${audience}
-Selected Features: ${features.join(", ")}
+Audience: ${audience}
+Features: ${features.join(", ")}
 
-CRITICAL RULES:
-- Use Next.js 14 App Router (src/app/ structure)
-- Use TypeScript
-- Use Tailwind CSS for styling
-- NEVER import a component that you don't generate as a file
-- NEVER reference external files that aren't in your file list
-- Every import must have a corresponding file in the output
-- Use inline components instead of separate files when possible
-- No placeholders, no TODO comments, complete working code only
+Generate these EXACT files with COMPLETE content:
 
-EXACT package.json to use:
+1. package.json - use EXACTLY this:
 {
-  "name": "${projectName.toLowerCase().replace(/\s+/g, '-')}",
-  "version": "1.0.0",
+  "name": "${projectName.toLowerCase().replace(/[^a-z0-9]/g, '-')}",
+  "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "15.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "typescript": "^5",
-    "tailwindcss": "^3.4.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0"
-  }
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start" },
+  "dependencies": { "next": "14.2.5", "react": "^18.3.1", "react-dom": "^18.3.1" },
+  "devDependencies": { "@types/node": "^20", "@types/react": "^18", "@types/react-dom": "^18", "typescript": "^5", "tailwindcss": "^3.4.1", "autoprefixer": "^10.0.1", "postcss": "^8" }
 }
 
-EXACT files to generate (no more, no less):
-1. package.json (use exact content above)
-2. tsconfig.json
-3. tailwind.config.ts
-4. postcss.config.js
-5. next.config.js
-6. src/app/globals.css
-7. src/app/layout.tsx (NO external component imports)
-8. src/app/page.tsx (full landing page, NO external imports)
-9. 2-3 more pages based on features (each self-contained, NO external imports)
+2. tsconfig.json - use EXACTLY this:
+{
+  "compilerOptions": {
+    "target": "es5", "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true, "skipLibCheck": true, "strict": true,
+    "noEmit": true, "esModuleInterop": true, "module": "esnext",
+    "moduleResolution": "bundler", "resolveJsonModule": true,
+    "isolatedModules": true, "jsx": "preserve", "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
 
-Return ONLY a valid JSON array, no markdown, no backticks:
+3. tailwind.config.ts - use EXACTLY this:
+import type { Config } from "tailwindcss";
+const config: Config = {
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  theme: { extend: {} },
+  plugins: [],
+};
+export default config;
+
+4. postcss.config.js - use EXACTLY this:
+module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
+
+5. next.config.js - use EXACTLY this:
+/** @type {import('next').NextConfig} */
+const nextConfig = {}
+module.exports = nextConfig
+
+6. src/app/globals.css - use EXACTLY this:
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+7. src/app/layout.tsx - use EXACTLY this structure:
+import type { Metadata } from "next";
+import "./globals.css";
+export const metadata: Metadata = { title: "${projectName}", description: "${idea}" };
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <html lang="en"><body>{children}</body></html>;
+}
+
+8. src/app/page.tsx - Generate a BEAUTIFUL, COMPLETE landing page for "${projectName}" using Tailwind CSS with:
+- A navbar with the project name
+- A hero section with headline and CTA button
+- A features section with 3 feature cards
+- A footer
+Use ONLY inline Tailwind classes. NO external component imports. Make it visually stunning with colors, gradients, shadows.
+
+9. Generate 2-3 more pages based on these features: ${features.join(", ")}
+Each page must be self-contained with NO external component imports.
+Each page must use Tailwind CSS classes for styling.
+Each page must be a complete, working React component.
+
+CRITICAL RULES:
+- NEVER import components that aren't in your file list
+- NEVER use placeholder text like "your code here"
+- EVERY file must be 100% complete and working
+- Use Tailwind CSS classes for ALL styling
+- Pages must look professional and modern
+
+Return ONLY a valid JSON array with NO markdown backticks:
 [
-  {
-    "filename": "package.json",
-    "content": "exact content here"
-  }
+  { "filename": "package.json", "content": "..." },
+  { "filename": "tsconfig.json", "content": "..." },
+  { "filename": "tailwind.config.ts", "content": "..." },
+  { "filename": "postcss.config.js", "content": "..." },
+  { "filename": "next.config.js", "content": "..." },
+  { "filename": "src/app/globals.css", "content": "..." },
+  { "filename": "src/app/layout.tsx", "content": "..." },
+  { "filename": "src/app/page.tsx", "content": "..." }
 ]`;
 
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert Next.js developer. You always return valid JSON arrays only. No markdown. No backticks. No explanation. Just the JSON array.",
+        },
+        { role: "user", content: prompt }
+      ],
       max_tokens: 8000,
+      temperature: 0.3,
     });
 
     const content = response.choices[0].message.content || "[]";
 
-let files;
-try {
-  const cleaned = content.replace(/```json|```/g, "").trim();
-  console.log("RAW CONTENT:", cleaned.slice(0, 500));
-  files = JSON.parse(cleaned);
-  console.log("PARSED FILES COUNT:", files.length);
-} catch (e) {
-  console.log("PARSE ERROR:", e);
-  files = [];
-}
+    let files;
+    try {
+      const cleaned = content
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+      
+      // Find the JSON array
+      const start = cleaned.indexOf("[");
+      const end = cleaned.lastIndexOf("]");
+      
+      if (start === -1 || end === -1) {
+        throw new Error("No JSON array found");
+      }
+      
+      const jsonStr = cleaned.slice(start, end + 1);
+      files = JSON.parse(jsonStr);
+    } catch (e) {
+      console.error("Parse error:", e);
+      files = [];
+    }
 
     return NextResponse.json({ files });
 
