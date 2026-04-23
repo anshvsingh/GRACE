@@ -193,8 +193,4 @@ MIT License — free to use, modify, and distribute.
 
 ---
 
-## 👨‍💻 Built By
-
-Built with ❤️ and a lot of AI by **Aaditya**
-
-> *"Stop waiting. Start building."* — Grace
+## 👨‍💻 Built By ANSH VARDHAN SINGH
