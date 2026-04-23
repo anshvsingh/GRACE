@@ -81,33 +81,57 @@ export async function POST(req: NextRequest) {
     }
 
     // Only ask AI to generate the actual app page
-    const prompt = `You are an expert React developer. Generate a single complete page.tsx file for a Next.js app.
+   const prompt = `You are an expert React developer. Generate a STUNNING, FULLY FUNCTIONAL single page app.
 
 Project: ${projectName}
-Idea: ${idea}
+Core Idea: ${idea}
 Industry: ${industry}
 Audience: ${audience}
-Features: ${features.join(", ")}
+Features requested: ${features.join(", ")}
 
-Generate ONLY the content for src/app/page.tsx.
+THE MOST IMPORTANT THING:
+Build the ACTUAL app the user described: "${idea}"
+Not a generic landing page. The REAL working app.
 
-REQUIREMENTS:
-- Start with "use client";
-- Import ONLY useState from "react" - nothing else
-- Dark theme with beautiful gradients
-- Navbar with app name and navigation that works with useState
-- Hero section with headline and CTA
-- All features implemented: ${features.join(", ")}
-- Every button must work using useState
-- Use realistic dummy data
-- Beautiful Tailwind CSS classes
-- At least 400 lines of code
-- NO external imports
-- NO missing dependencies
-- Professional and modern design
+For example:
+- Event Planner → Show actual events list, create event form, calendar view
+- Expense Tracker → Show actual expenses table, add expense form, charts
+- Job Board → Show actual job listings, apply button, filters
+- Fitness Planner → Show actual workout plans, exercise list, progress
 
-Return ONLY the raw TypeScript code for page.tsx.
-No explanation. No markdown. Just the code starting with "use client";`;
+STRUCTURE THE APP LIKE THIS:
+
+1. NAVBAR - App name + navigation tabs for each feature
+2. MAIN CONTENT - Changes based on active tab using useState
+3. Each tab shows the REAL feature:
+
+For features: ${features.join(", ")} build these exact sections:
+
+${features.map((f: string) => `- ${f} section: Show real UI for ${f} with dummy data, forms, buttons`).join("\n")}
+
+TECHNICAL REQUIREMENTS:
+- "use client"; at the very top (with quotes!)
+- import { useState } from "react"; 
+- Dark theme: bg-gray-900, bg-gray-800 for cards
+- Blue/cyan accents: text-blue-400, bg-blue-500, border-blue-500
+- Beautiful gradient header: bg-gradient-to-r from-blue-600 to-cyan-600
+- Realistic dummy data (at least 5-8 items per list)
+- Working forms with useState
+- Working modals with useState  
+- Working filters/search with useState
+- Tables with real columns and data
+- Status badges with colors
+- Action buttons (Edit, Delete, View) that update state
+- Minimum 500 lines of code
+- NO external imports except useState from react
+
+DUMMY DATA EXAMPLES:
+- Names: use realistic names like "Sarah Johnson", "Tech Conference 2026"
+- Dates: use realistic dates like "March 25, 2026"
+- Prices: use realistic prices like "$299", "₹2,500"
+- Status: use colored badges like "Active"=green, "Pending"=yellow, "Done"=blue
+
+Return ONLY the raw TSX code. No markdown. No backticks. Start with "use client";`;
 
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
